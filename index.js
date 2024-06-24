@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'http';
 import "dotenv/config";
+import cors from 'cors';
 import mongoose from 'mongoose'
 import referido from './routes/referido.js';
 import referente from './routes/referente.js';
@@ -11,6 +12,8 @@ const app = express();
 const port= process.env.PORT
 
 app.use(express.json());
+app.use(cors());
+app.use(express.static('public'))
 
 app.use("/api/referido", referido);
 app.use("/api/referente", referente);
