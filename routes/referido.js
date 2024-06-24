@@ -2,6 +2,7 @@ import { Router } from "express";
 import httpReferido from "../controllers/referido.js";
 import { check } from "express-validator";
 import validarCampos from "../middlewares/validar.js";
+import helpersReferido from "../helpers/referido.js";
 
 const router = new Router();
 
@@ -14,6 +15,7 @@ router.post(
   [
     check("nombre", "Digite el nombre").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
+    check("cedula").custom(helpersReferido.existeCedula),
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
