@@ -9,6 +9,15 @@ const router = new Router();
 //Get
 router.get("/all", httpReferido.getAll);
 
+router.get(
+  "/buscarId/:id",
+  [
+    check("id", "Digite el id").not().isEmpty(),
+    check("id", "El id es invalido").isMongoId(),
+  ],
+  httpReferido.getPorId
+);
+
 //Post
 router.post(
   "/registro",
@@ -19,7 +28,9 @@ router.post(
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("opinion", "Por favor digite su opiniòn del servicio").not().isEmpty(),
+    check("opinion", "Por favor digite su opiniòn del servicio")
+      .not()
+      .isEmpty(),
     validarCampos,
   ],
   httpReferido.registro
@@ -32,10 +43,13 @@ router.put(
   [
     check("nombre", "Digite el nombre").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
+    check("cedula").custom(helpersReferido.existeCedula),
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("opinion", "Por favor digite su opiniòn del servicio").not().isEmpty(),
+    check("opinion", "Por favor digite su opiniòn del servicio")
+      .not()
+      .isEmpty(),
     validarCampos,
   ],
   httpReferido.editar

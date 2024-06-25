@@ -2,19 +2,26 @@ import Referido from "../models/referido.js";
 
 const helpersReferido = {
   existeCedula: async (cedula, req) => {
-    const existe = await Referido.findOne({
-      $text: { $search: cedula },
-    });
+    const existe = await Referido.findOne({ cedula: cedula });
 
     if (existe) {
       if (req.req.method === "PUT" && req.req.body._id != existe._id) {
-        throw new Error(`Ya existe esa cedula en la base de datos!!! `);
+        throw new Error(`Persona ya referida`);
       } else if (req.req.method === "POST") {
-        throw new Error(`Ya existe esa cedula en la base de datos!!! `);
+        throw new Error(`Persona ya referida`);
       }
     }
 
     req.req.AreaUpdate = existe;
+  },
+  existeReferido: async (cedula, req) => {
+    const existe = await Referido.findOne({ cedula: cedula });
+
+    if (existe) {
+      return existe;
+    } else {
+      return null;
+    }
   },
 };
 export default helpersReferido;

@@ -11,6 +11,16 @@ const httpReferido = {
     }
   },
 
+  getPorId: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const referido = await Referido.findById(id);
+      res.json(referido);
+    } catch (error) {
+      res.status(400).json({ error });
+    }
+  },
+
   //Post registro referido
   registro: async (req, res) => {
     try {

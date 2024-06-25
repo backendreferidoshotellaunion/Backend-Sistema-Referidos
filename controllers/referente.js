@@ -1,4 +1,5 @@
 import Referente from "../models/referente.js";
+import helpersReferente from "../helpers/referente.js";
 
 const httpReferente = {
   //Get
@@ -10,6 +11,8 @@ const httpReferente = {
       res.status(500).json({ error });
     }
   },
+
+  
 
   getPorCedula: async (req, res) => {
     try {
@@ -27,19 +30,40 @@ const httpReferente = {
     try {
       const { nombre, cedula, correo, telefono, idReferido } = req.body;
 
-      const referente = new Referente({
-        nombre,
+      const referenteExistente = await helpersReferente.existeCedula(
         cedula,
-        correo,
-        telefono,
-        idReferido,
-      });
+        req
+      );
 
-      await referente.save();
+      if (referenteExistente) {
+        res.json(referenteExistente);
+        const nuevoReferente = new Referente({
+          nombre: referenteExistente.nombre,
+          cedula: referenteExistente.cedula,
+          correo: referenteExistente.correo,
+          telefono: referenteExistente.telefono,
+          idReferido,
+        });
 
-      const ref = await Referente.findById(referente._id).populate("idReferido")
+        await nuevoReferente.save();
+      } else {
+        
+        const nuevoReferente = new Referente({
+          nombre,
+          cedula,
+          correo,
+          telefono,
+          idReferido,
+        });
 
-      res.json(ref);
+        await nuevoReferente.save();
+
+        const ref = await Referente.findById(nuevoReferente._id).populate(
+          "idReferido"
+        );
+
+        res.json(ref);
+      }
     } catch (error) {
       res.status(500).json({ error });
     }

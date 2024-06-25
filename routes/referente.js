@@ -2,6 +2,7 @@ import { Router } from "express";
 import httpReferente from "../controllers/referente.js";
 import { check } from "express-validator";
 import validarCampos from "../middlewares/validar.js";
+import helpersReferente from "../helpers/referente.js";
 
 const router = new Router();
 
