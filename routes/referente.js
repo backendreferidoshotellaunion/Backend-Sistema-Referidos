@@ -20,7 +20,7 @@ router.post(
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("idReferido", "Por favor digite la id").not().isEmpty(),
+    check("idReferido", "Por favor digite la id referido").not().isEmpty(),
     check("idReferido", "Ingrese un ID válido").isMongoId(),
     validarCampos,
   ],

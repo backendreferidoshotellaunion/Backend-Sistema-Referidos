@@ -5,7 +5,7 @@ const httpReferente = {
   //Get
   getAll: async (req, res) => {
     try {
-      const referente = await Referente.find();
+      const referente = await Referente.find().populate("idReferido");
       res.json(referente);
     } catch (error) {
       res.status(500).json({ error });
