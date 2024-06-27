@@ -18,6 +18,8 @@ router.get(
   httpReferido.getPorId
 );
 
+router.get('/buscarNombre/:nombre', httpReferido.getPorNombre);
+
 //Post
 router.post(
   "/registro",
@@ -41,15 +43,14 @@ router.post(
 router.put(
   "/editar/:id",
   [
+    check("id", "ID no válido").isMongoId(),
     check("nombre", "Digite el nombre").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
     check("cedula").custom(helpersReferido.existeCedula),
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("opinion", "Por favor digite su opiniòn del servicio")
-      .not()
-      .isEmpty(),
+    check("opinion", "Por favor digite su opiniòn del servicio").not().isEmpty(),
     validarCampos,
   ],
   httpReferido.editar

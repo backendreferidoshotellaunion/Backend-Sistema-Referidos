@@ -21,6 +21,17 @@ const httpReferido = {
     }
   },
 
+  getPorNombre: async (req, res) => {
+    try {
+      const { nombre } = req.params;
+      const referido = await Referido.find({ nombre });
+      res.json(referido);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Error en el servidor" });
+    }
+  },
+
   //Post registro referido
   registro: async (req, res) => {
     try {
@@ -61,7 +72,7 @@ const httpReferido = {
 
       res.json(referido);
     } catch (error) {
-      console.log(error);
+      console.log("editar error", error);
       res.status(500).json({ error });
     }
   },

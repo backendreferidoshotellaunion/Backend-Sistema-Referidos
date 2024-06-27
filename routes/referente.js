@@ -9,7 +9,11 @@ const router = new Router();
 //Get
 router.get("/all", httpReferente.getAll);
 
-router.get('/buscarCedula/:cedula', httpReferente.getPorCedula);
+router.get(
+  "/buscarCedula/:cedula",
+  [check("cedula", "Digite la cedula").not().isEmpty()],
+  httpReferente.getPorCedula
+);
 
 //Post
 router.post(
