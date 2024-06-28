@@ -1,5 +1,7 @@
 import Referente from "../models/referente.js";
+import Referido from "../models/referido.js";
 import helpersReferente from "../helpers/referente.js";
+import helpersGeneral from "../helpers/generales.js";
 
 const httpReferente = {
   //Get
@@ -12,8 +14,6 @@ const httpReferente = {
     }
   },
 
-  
-
   getPorCedula: async (req, res) => {
     try {
       const { cedula } = req.params;
@@ -24,6 +24,29 @@ const httpReferente = {
       res.status(500).json({ error: "Error en el servidor" });
     }
   },
+
+  getPorCedulaReferido: async (req, res) => {
+    try {
+      const { cedula } = req.params; 
+      const referido = await Referido.findOne({ cedula });
+      if (!referido) {
+        return res.status(404).json({ error: 'No existe el referido con la cédula digitada' });
+      }
+
+      const referente = await Referente.findOne({ idReferido: referido._id }).populate("idReferido");
+      if (!referente) {
+        return res.status(404).json({ error: 'Referente no encontrado' });
+      }
+
+      res.json(referente);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Error en el servidor" });
+    }
+  },
+
+
+  
 
   //Post registro referente
   registro: async (req, res) => {
@@ -47,9 +70,8 @@ const httpReferente = {
 
         await nuevoReferente.save();
       } else {
-        
         const nuevoReferente = new Referente({
-          nombre,
+          nombre: await helpersGeneral.primeraMayuscula(nombre),
           cedula,
           correo,
           telefono,
@@ -77,7 +99,7 @@ const httpReferente = {
       const referente = await Referente.findByIdAndUpdate(
         id,
         {
-          nombre,
+          nombre: await helpersGeneral.primeraMayuscula(nombre),
           cedula,
           correo,
           telefono,

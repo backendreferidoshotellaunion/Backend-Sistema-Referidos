@@ -11,9 +11,18 @@ router.get("/all", httpReferente.getAll);
 
 router.get(
   "/buscarCedula/:cedula",
-  [check("cedula", "Digite la cedula").not().isEmpty()],
+  [
+    check("cedula", "Digite la cedula").not().isEmpty(),
+    validarCampos,
+  ],
   httpReferente.getPorCedula
 );
+
+router.get(
+    "/buscarCedulaRef/:cedula",
+    [check("cedula", "Digite la cedula").not().isEmpty()],
+    httpReferente.getPorCedulaReferido
+  );
 
 //Post
 router.post(

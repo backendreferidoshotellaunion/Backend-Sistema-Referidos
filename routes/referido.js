@@ -20,6 +20,8 @@ router.get(
 
 router.get('/buscarNombre/:nombre', httpReferido.getPorNombre);
 
+
+
 //Post
 router.post(
   "/registro",
@@ -33,6 +35,7 @@ router.post(
     check("opinion", "Por favor digite su opiniòn del servicio")
       .not()
       .isEmpty(),
+    check("metodo", "Por favor seleccione un método").not().isEmpty(),
     validarCampos,
   ],
   httpReferido.registro
@@ -51,6 +54,7 @@ router.put(
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
     check("opinion", "Por favor digite su opiniòn del servicio").not().isEmpty(),
+    check("metodo", "Por favor seleccione un método").not().isEmpty(),
     validarCampos,
   ],
   httpReferido.editar

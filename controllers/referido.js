@@ -1,4 +1,5 @@
 import Referido from "../models/referido.js";
+import helpersGeneral from "../helpers/generales.js";
 
 const httpReferido = {
   //Get
@@ -35,14 +36,15 @@ const httpReferido = {
   //Post registro referido
   registro: async (req, res) => {
     try {
-      const { nombre, cedula, correo, telefono, opinion } = req.body;
+      const { nombre, cedula, correo, telefono, opinion, metodo } = req.body;
 
       const referido = new Referido({
-        nombre,
+        nombre: await helpersGeneral.primeraMayuscula(nombre),
         cedula,
         correo,
         telefono,
         opinion,
+        metodo
       });
 
       await referido.save();
@@ -56,16 +58,17 @@ const httpReferido = {
   editar: async (req, res) => {
     try {
       const { id } = req.params;
-      const { nombre, cedula, correo, telefono, opinion } = req.body;
+      const { nombre, cedula, correo, telefono, opinion, metodo } = req.body;
 
       const referido = await Referido.findByIdAndUpdate(
         id,
         {
-          nombre,
+          nombre: await helpersGeneral.primeraMayuscula(nombre),
           cedula,
           correo,
           telefono,
           opinion,
+          metodo
         },
         { new: true }
       );
