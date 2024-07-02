@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose'
 import referido from './routes/referido.js';
 import referente from './routes/referente.js';
+import usuario from './routes/usuario.js';
 
 
 
@@ -17,6 +18,7 @@ app.use(express.static('public'))
 
 app.use("/api/referido", referido);
 app.use("/api/referente", referente);
+app.use("/api/usuario", usuario);
 
 const server = http.createServer(app)
 
