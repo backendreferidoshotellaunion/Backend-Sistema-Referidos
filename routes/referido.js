@@ -32,9 +32,6 @@ router.post(
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("opinion", "Por favor digite su opiniòn del servicio")
-      .not()
-      .isEmpty(),
     check("metodo", "Por favor seleccione un método").not().isEmpty(),
     validarCampos,
   ],

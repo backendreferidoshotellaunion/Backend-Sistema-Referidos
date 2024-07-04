@@ -6,7 +6,7 @@ const referidoSchema = new mongoose.Schema({
   correo: { type: String, require: true, },
   telefono: { type: String, require: true, },
   opinion: { type: String, require: true,},
-  metodo: { type: String, require: true,},
+  metodo: { type: String, require: false,},
   estado: { type: Boolean, default: 1 },
   createAT: { type: Date, default: Date.now },
 });

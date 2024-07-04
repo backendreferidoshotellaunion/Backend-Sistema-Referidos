@@ -38,8 +38,10 @@ const httpReferido = {
     try {
       const { nombre, cedula, correo, telefono, opinion, metodo } = req.body;
 
+      const mayusNombre = await helpersGeneral.mayusAllPalabras(nombre.trim());
+
       const referido = new Referido({
-        nombre: await helpersGeneral.primeraMayuscula(nombre),
+        nombre: mayusNombre,
         cedula,
         correo,
         telefono,
