@@ -36,17 +36,22 @@ const httpReferido = {
   //Post registro referido
   registro: async (req, res) => {
     try {
-      const { nombre, cedula, correo, telefono, opinion, metodo } = req.body;
+      const { nombre, apellido, cedula, correo, telefono, opinion, metodo } =
+        req.body;
 
       const mayusNombre = await helpersGeneral.mayusAllPalabras(nombre.trim());
+      const MayusApellido = await helpersGeneral.mayusAllPalabras(
+        apellido.trim()
+      );
 
       const referido = new Referido({
         nombre: mayusNombre,
+        apellido: MayusApellido,
         cedula,
         correo,
         telefono,
         opinion,
-        metodo
+        metodo,
       });
 
       await referido.save();
@@ -62,15 +67,21 @@ const httpReferido = {
       const { id } = req.params;
       const { nombre, cedula, correo, telefono, opinion, metodo } = req.body;
 
+      const mayusNombre = await helpersGeneral.mayusAllPalabras(nombre.trim());
+      const MayusApellido = await helpersGeneral.mayusAllPalabras(
+        apellido.trim()
+      );
+
       const referido = await Referido.findByIdAndUpdate(
         id,
         {
-          nombre: await helpersGeneral.primeraMayuscula(nombre),
+          nombre: mayusNombre,
+          apellido: MayusApellido,
           cedula,
           correo,
           telefono,
           opinion,
-          metodo
+          metodo,
         },
         { new: true }
       );

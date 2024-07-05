@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const referenteSchema = new mongoose.Schema({
   nombre: { type: String, require: true, },
+  apellido: { type: String, require: true, },
   cedula: { type: String, require: true, },
   correo: { type: String, require: true,},
   telefono: { type: String, require: true,},

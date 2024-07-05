@@ -27,15 +27,19 @@ const httpReferente = {
 
   getPorCedulaReferido: async (req, res) => {
     try {
-      const { cedula } = req.params; 
+      const { cedula } = req.params;
       const referido = await Referido.findOne({ cedula });
       if (!referido) {
-        return res.status(404).json({ error: 'No existe el referido con la cédula digitada' });
+        return res
+          .status(404)
+          .json({ error: "No existe el referido con la cédula digitada" });
       }
 
-      const referente = await Referente.findOne({ idReferido: referido._id }).populate("idReferido");
+      const referente = await Referente.findOne({
+        idReferido: referido._id,
+      }).populate("idReferido");
       if (!referente) {
-        return res.status(404).json({ error: 'Referente no encontrado' });
+        return res.status(404).json({ error: "Referente no encontrado" });
       }
 
       res.json(referente);
@@ -45,13 +49,11 @@ const httpReferente = {
     }
   },
 
-
-  
-
   //Post registro referente
   registro: async (req, res) => {
     try {
-      const { nombre, cedula, correo, telefono, idReferido } = req.body;
+      const { nombre, apellido, cedula, correo, telefono, idReferido } =
+        req.body;
 
       const referenteExistente = await helpersReferente.existeCedula(
         cedula,
@@ -62,6 +64,7 @@ const httpReferente = {
         res.json(referenteExistente);
         const nuevoReferente = new Referente({
           nombre: referenteExistente.nombre,
+          apellido: referenteExistente.apellido,
           cedula: referenteExistente.cedula,
           correo: referenteExistente.correo,
           telefono: referenteExistente.telefono,
@@ -71,7 +74,8 @@ const httpReferente = {
         await nuevoReferente.save();
       } else {
         const nuevoReferente = new Referente({
-          nombre: await helpersGeneral.primeraMayuscula(nombre),
+          nombre,
+          apellido,
           cedula,
           correo,
           telefono,

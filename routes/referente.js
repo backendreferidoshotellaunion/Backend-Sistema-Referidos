@@ -29,6 +29,7 @@ router.post(
   "/registro",
   [
     check("nombre", "Digite el nombre").not().isEmpty(),
+    check("apellido", "Digite el apellido").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),

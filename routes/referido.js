@@ -27,6 +27,7 @@ router.post(
   "/registro",
   [
     check("nombre", "Digite el nombre").not().isEmpty(),
+    check("apellido", "Digite el apellido").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
     check("cedula").custom(helpersReferido.existeCedula),
     check("correo", "Digite el correo").not().isEmpty(),
@@ -45,6 +46,7 @@ router.put(
   [
     check("id", "ID no válido").isMongoId(),
     check("nombre", "Digite el nombre").not().isEmpty(),
+    check("apellido", "Digite el apellido").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
     check("cedula").custom(helpersReferido.existeCedula),
     check("correo", "Digite el correo").not().isEmpty(),
