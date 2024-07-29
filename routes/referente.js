@@ -34,8 +34,6 @@ router.post(
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("idReferido", "Por favor digite la id referido").not().isEmpty(),
-    check("idReferido", "Ingrese un ID válido").isMongoId(),
     validarCampos,
   ],
   httpReferente.registro
@@ -47,15 +45,28 @@ router.put(
   "/editar/:id",
   [
     check("nombre", "Digite el nombre").not().isEmpty(),
+    check("apellido", "Digite el apellido").not().isEmpty(),
     check("cedula", "Digite la cedula").not().isEmpty(),
     check("correo", "Digite el correo").not().isEmpty(),
     check("correo", "Dirección de correo no válida").isEmail(),
     check("telefono", "Digite el telefono").not().isEmpty(),
-    check("idReferido", "Por favor digite la id").not().isEmpty(),
-    check("idReferido", "Ingrese un ID válido").isMongoId(),
     validarCampos,
   ],
   httpReferente.editar
+);
+
+router.put(
+  "/editar-por-cedula/:cedula",
+  [
+    check("nombre", "Digite el nombre").not().isEmpty(),
+    check("apellido", "Digite el apellido").not().isEmpty(),
+    check("cedula", "Digite la cedula").not().isEmpty(),
+    check("correo", "Digite el correo").not().isEmpty(),
+    check("correo", "Dirección de correo no válida").isEmail(),
+    check("telefono", "Digite el telefono").not().isEmpty(),
+    validarCampos,
+  ],
+  httpReferente.editarPorCedula
 );
 
 router.put(
@@ -67,6 +78,8 @@ router.put(
   ],
   httpReferente.putInactivar
 );
+
+
 
 router.put(
   "/activar/:id",

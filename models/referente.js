@@ -6,7 +6,8 @@ const referenteSchema = new mongoose.Schema({
   cedula: { type: String, require: true, },
   correo: { type: String, require: true,},
   telefono: { type: String, require: true,},
-  idReferido: { type: mongoose.Schema.Types.ObjectId, ref: "Referido", require: true },
+  idReferido: { type: mongoose.Schema.Types.ObjectId, ref: "Referido", /* require: true */ },
+  idNivelReferente: { type: mongoose.Schema.Types.ObjectId, ref: "Nivel_Referente" },
   estado: { type: Boolean, default: 1 },
   createAT: { type: Date, default: Date.now },
 });

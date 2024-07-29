@@ -119,6 +119,35 @@ const httpReferente = {
     }
   },
 
+  editarPorCedula: async (req, res) => {
+    try {
+      const { cedula } = req.body;
+      const referentes = await Referente.find({ cedula });
+
+      if (!referentes || referentes.length === 0) {
+        return res
+          .status(404)
+          .json({ error: "No se encontró embajador con la cédula digitada" });
+      }
+
+      const updates = req.body;
+      updates.cedula = cedula;
+
+      await Promise.all(
+        referentes.map(async (referente) => {
+          await Referente.findByIdAndUpdate(referente._id, updates, {
+            new: true,
+          });
+        })
+      );
+
+      res.json({ message: "Embajador editado con éxito" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Error al editar embajador" });
+    }
+  },
+
   putActivar: async (req, res) => {
     try {
       const { id } = req.params;

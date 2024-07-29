@@ -3,6 +3,7 @@ import httpReferido from "../controllers/referido.js";
 import { check } from "express-validator";
 import validarCampos from "../middlewares/validar.js";
 import helpersReferido from "../helpers/referido.js";
+import helpersGeneral from "../helpers/generales.js";
 
 const router = new Router();
 

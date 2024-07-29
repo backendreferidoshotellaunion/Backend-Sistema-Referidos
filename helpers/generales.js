@@ -45,6 +45,7 @@ const helpersGeneral = {
         (match) => tildes[match] || match
       );
     },
+    
     primeraMayuscula: async (cadena) => {
       const mayus = cadena.toLowerCase();
       return mayus.charAt(0).toUpperCase() + mayus.slice(1);

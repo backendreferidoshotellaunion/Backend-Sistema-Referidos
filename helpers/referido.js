@@ -6,9 +6,9 @@ const helpersReferido = {
 
     if (existe) {
       if (req.req.method === "PUT" && req.req.body._id != existe._id) {
-        throw new Error(`La cédula digitada '${cedula}', ya refirió a otra persona`);
+        throw new Error(`La persona con la cédula digitada ya se registró`);
       } else if (req.req.method === "POST") {
-        throw new Error(`La cédula digitada '${cedula}', ya refirió a otra persona`);
+        throw new Error(`La persona con la cédula digitada ya se registró`);
       }
     }
 
