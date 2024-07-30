@@ -128,19 +128,21 @@ const httpReferente = {
     }
   },
 
+
+  // Existing method
   editarPorCedula: async (req, res) => {
     try {
       const { cedula } = req.params;
       const referentes = await Referente.find({ cedula });
-
+  
       if (!referentes || referentes.length === 0) {
         return res
           .status(404)
           .json({ error: "No se encontró embajador con la cédula digitada" });
       }
-
+  
       const updates = req.body;
-
+  
       const updatedReferentes = await Promise.all(
         referentes.map(async (referente) => {
           return await Referente.findByIdAndUpdate(referente._id, updates, {
@@ -150,13 +152,41 @@ const httpReferente = {
             .populate("idNivelReferente");
         })
       );
-
+  
+      // Send email to the first referente (or any one of them)
+      const referente = updatedReferentes[0];
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.userEmail,
+          pass: process.env.password,
+        },
+      });
+  
+      const mailOptions = {
+        from: process.env.userEmail,
+        to: referente.correo,
+        subject: "Información sobre el nivel de embajador - Hotel",
+        text: `Hola ${referente.nombre}, se te ha asignado un nuevo nivel de embajador en el hotel, ahora estás en el ${referente.idNivelReferente.nombre} y cuentas con los siguientes beneficios:
+        ${referente.idNivelReferente.beneficio}.`,
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(`Error al enviar el correo a ${referente.correo}:`, error);
+        } else {
+          console.log(`Correo electrónico enviado a ${referente.correo}: ${info.response}`);
+        }
+      });
+  
       res.json(updatedReferentes);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: "Error al editar embajador" });
     }
   },
+  
+
 
   enviarNivelReferente: async (req, res) => {
     try {
@@ -173,7 +203,7 @@ const httpReferente = {
       const mailOptions = {
         from: process.env.userEmail,
         to: correo,
-        subject: "Información sobre el nivel de embajador - Hotel blablabla",
+        subject: "Información sobre el nivel de embajador - Hotel ",
         text: "Informacion embajador ",
       };
 
