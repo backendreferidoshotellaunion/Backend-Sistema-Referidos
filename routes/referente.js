@@ -11,18 +11,24 @@ router.get("/all", httpReferente.getAll);
 
 router.get(
   "/buscarCedula/:cedula",
-  [
-    check("cedula", "Digite la cedula").not().isEmpty(),
-    validarCampos,
-  ],
+  [check("cedula", "Digite la cedula").not().isEmpty(), validarCampos],
   httpReferente.getPorCedula
 );
 
 router.get(
-    "/buscarCedulaRef/:cedula",
-    [check("cedula", "Digite la cedula").not().isEmpty()],
-    httpReferente.getPorCedulaReferido
-  );
+  "/buscarCedulaRef/:cedula",
+  [check("cedula", "Digite la cedula").not().isEmpty()],
+  httpReferente.getPorCedulaReferido
+);
+
+router.get(
+  "/enviar-info/:correo",
+  [
+    check("correo", "Por favor ingrese el correo").not().isEmpty(),
+    validarCampos,
+  ],
+  httpReferente.enviarNivelReferente
+);
 
 //Post
 router.post(
@@ -58,12 +64,10 @@ router.put(
 router.put(
   "/editar-por-cedula/:cedula",
   [
-    check("nombre", "Digite el nombre").not().isEmpty(),
-    check("apellido", "Digite el apellido").not().isEmpty(),
-    check("cedula", "Digite la cedula").not().isEmpty(),
-    check("correo", "Digite el correo").not().isEmpty(),
-    check("correo", "Dirección de correo no válida").isEmail(),
-    check("telefono", "Digite el telefono").not().isEmpty(),
+    check("idNivelReferente", "Por favor escoja un nivel de embajador")
+      .not()
+      .isEmpty(),
+    check("idNivelReferente", "Ingrese un ID válido").isMongoId(),
     validarCampos,
   ],
   httpReferente.editarPorCedula
@@ -78,8 +82,6 @@ router.put(
   ],
   httpReferente.putInactivar
 );
-
-
 
 router.put(
   "/activar/:id",

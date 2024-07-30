@@ -2,12 +2,15 @@ import Referente from "../models/referente.js";
 import Referido from "../models/referido.js";
 import helpersReferente from "../helpers/referente.js";
 import helpersGeneral from "../helpers/generales.js";
+import nodemailer from "nodemailer";
 
 const httpReferente = {
   //Get
   getAll: async (req, res) => {
     try {
-      const referente = await Referente.find().populate("idReferido");
+      const referente = await Referente.find()
+        .populate("idReferido")
+        .populate("idNivelReferente");
       res.json(referente);
     } catch (error) {
       res.status(500).json({ error });
@@ -17,7 +20,9 @@ const httpReferente = {
   getPorCedula: async (req, res) => {
     try {
       const { cedula } = req.params;
-      const referente = await Referente.find({ cedula }).populate("idReferido");
+      const referente = await Referente.find({ cedula })
+        .populate("idReferido")
+        .populate("idNivelReferente");
       res.json(referente);
     } catch (error) {
       console.log(error);
@@ -37,7 +42,9 @@ const httpReferente = {
 
       const referente = await Referente.findOne({
         idReferido: referido._id,
-      }).populate("idReferido");
+      })
+        .populate("idReferido")
+        .populate("idNivelReferente");
       if (!referente) {
         return res.status(404).json({ error: "Referente no encontrado" });
       }
@@ -110,7 +117,9 @@ const httpReferente = {
           idReferido,
         },
         { new: true }
-      ).populate("idUsuario");
+      )
+        .populate("idReferido")
+        .populate("idNivelReferente");
 
       res.json(referente);
     } catch (error) {
@@ -121,7 +130,7 @@ const httpReferente = {
 
   editarPorCedula: async (req, res) => {
     try {
-      const { cedula } = req.body;
+      const { cedula } = req.params;
       const referentes = await Referente.find({ cedula });
 
       if (!referentes || referentes.length === 0) {
@@ -131,20 +140,60 @@ const httpReferente = {
       }
 
       const updates = req.body;
-      updates.cedula = cedula;
 
-      await Promise.all(
+      const updatedReferentes = await Promise.all(
         referentes.map(async (referente) => {
-          await Referente.findByIdAndUpdate(referente._id, updates, {
+          return await Referente.findByIdAndUpdate(referente._id, updates, {
             new: true,
-          });
+          })
+            .populate("idReferido")
+            .populate("idNivelReferente");
         })
       );
 
-      res.json({ message: "Embajador editado con éxito" });
+      res.json(updatedReferentes);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: "Error al editar embajador" });
+    }
+  },
+
+  enviarNivelReferente: async (req, res) => {
+    try {
+      const { correo } = req.params;
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.userEmail,
+          pass: process.env.password,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.userEmail,
+        to: correo,
+        subject: "Información sobre el nivel de embajador - Hotel blablabla",
+        text: "Informacion embajador ",
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({
+            success: false,
+            error: "Error al enviar el correo electrónico.",
+          });
+        } else {
+          console.log("Correo electrónico enviado: " + info.response);
+          res.json({
+            success: true,
+            msg: "Correo electrónico enviado con éxito.",
+          });
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ error });
     }
   },
 
