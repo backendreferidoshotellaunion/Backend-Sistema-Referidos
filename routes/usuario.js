@@ -10,6 +10,22 @@ const router = new Router();
 //Get
 router.get("/all", [validarJWT], httpUsuario.getAll);
 
+router.get(
+  "/codigo-recuperar/:correo",
+  [
+    check("correo", "Por favor ingrese el correo").not().isEmpty(),
+    check("correo").custom(helpersUsuario.existeCorreo),
+    validarCampos,
+  ],
+  httpUsuario.codigoRecuperar
+);
+
+router.get(
+  "/confirmar-codigo/:codigo",
+  [check("codigo", "Ingrese el código").not().isEmpty(), validarCampos],
+  httpUsuario.confirmarCodigo
+);
+
 //Post
 router.post(
   "/registro",
@@ -38,6 +54,19 @@ router.post(
     check("password", "Digite la contraseña").not().isEmpty(),
   ],
   httpUsuario.login
+);
+
+router.put(
+  "/nueva-password",
+  [
+    check("correo", "Por favor ingrese el correo").not().isEmpty(),
+    check("correo").custom(helpersUsuario.existeCorreoNewPass),
+    check("codigo", "Ingrese el código").not().isEmpty(),
+    check("password", "Ingrese la password").not().isEmpty(),
+    check("password").custom(helpersUsuario.validarPassword),
+    validarCampos,
+  ],
+  httpUsuario.nuevaPassword
 );
 
 router.put(

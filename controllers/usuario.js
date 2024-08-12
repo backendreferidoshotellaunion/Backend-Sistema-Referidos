@@ -2,6 +2,19 @@ import Usuario from "../models/usuario.js";
 import bcryptjs from "bcryptjs";
 import { generarJWT } from "../middlewares/validar-jwt.js";
 import helpersGeneral from "../helpers/generales.js";
+import nodemailer from "nodemailer";
+
+let codigoEnviado = {};
+
+function generarNumeroAleatorio() {
+  let numeroAleatorio = Math.floor(Math.random() * 1000000);
+  let numero = numeroAleatorio.toString().padStart(6, "0");
+  let fechaCreacion = new Date();
+
+  codigoEnviado = { codigo: numero, fechaCreacion };
+
+  return numero;
+}
 
 const httpUsuario = {
   //Get
@@ -11,6 +24,79 @@ const httpUsuario = {
       res.json(usuario);
     } catch (error) {
       res.status(500).json({ error });
+    }
+  },
+
+  codigoRecuperar: async (req, res) => {
+    try {
+      const { correo } = req.params;
+
+      const codigo = generarNumeroAleatorio();
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.userEmail,
+          pass: process.env.password,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.userEmail,
+        to: correo,
+        subject: "Recuperación de Contraseña",
+        text: "Tu código para restablecer tu contraseña es: " + codigo,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({
+            success: false,
+            error: "Error al enviar el correo electrónico.",
+          });
+        } else {
+          console.log("Correo electrónico enviado: " + info.response);
+          res.json({
+            success: true,
+            msg: "Correo electrónico enviado con éxito.",
+          });
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  confirmarCodigo: async (req, res) => {
+    try {
+      const { codigo } = req.params;
+
+      if (!codigoEnviado) {
+        return res.status(400).json({ error: "Código no generado" });
+      }
+
+      const { codigo: codigoGuardado, fechaCreacion } = codigoEnviado;
+      const tiempoExpiracion = 30; // Tiempo de expiración en minutos
+
+      const tiempoActual = new Date();
+      const tiempoDiferencia = tiempoActual - new Date(fechaCreacion);
+      const minutosDiferencia = tiempoDiferencia / (1000 * 60);
+
+      if (minutosDiferencia > tiempoExpiracion) {
+        return res.status(400).json({ error: "El código ha expirado" });
+      }
+
+      if (codigo == codigoGuardado) {
+        return res.json({ msg: "Código correcto" });
+      }
+
+      return res.status(400).json({ error: "Código incorrecto" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        error: "Error, hable con el WebMaster",
+      });
     }
   },
 
@@ -70,12 +156,50 @@ const httpUsuario = {
       const token = await generarJWT(usuario.id);
       res.json({ usuario, token });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({
         error: "Hable con el WebMaster",
       });
     }
   },
 
+  /* recuperarContraseña: async (req, res) => {
+    const { correo } = req.body;
+  
+    try {
+      const usuario = await Usuario.findOne({ correo });
+      if (!usuario) {
+        return res.status(404).json({ error: "Correo electrónico no encontrado" });
+      }
+      const mensaje = `Hola ${usuario.nombre},\n\nHas solicitado recuperar tu contraseña.\n\nTu información de acceso es:\n\nCédula: ${usuario.identificacion}\nContraseña: ${usuario.password}`
+  
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.userEmail,
+          pass: process.env.password,
+        }
+      });
+  
+      const mailOptions = {
+        from: process.env.userEmail,
+        to: correo,
+        subject: 'Recordatorio de contraseña',
+        text: mensaje
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return res.status(500).json({ error: 'Error al enviar correo electrónico' });
+        }
+        res.json({ message: 'Correo electrónico enviado con éxito' });
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Error al recuperar contraseña' });
+    }
+  }, */
  
   editarUsuario: async (req, res) => {
     try {
@@ -97,6 +221,49 @@ const httpUsuario = {
       res.json(usuario);
     } catch (error) { console.log(error);
       res.status(500).json({ error });
+    }
+  },
+
+  nuevaPassword: async (req, res) => {
+    try {
+      const { codigo, password } = req.body;
+
+      const { codigo: codigoGuardado, fechaCreacion } = codigoEnviado;
+      const tiempoExpiracion = 30; // Tiempo de expiración en minutos
+
+      const tiempoActual = new Date();
+      const tiempoDiferencia = tiempoActual - new Date(fechaCreacion);
+      const minutosDiferencia = tiempoDiferencia / (1000 * 60);
+
+      if (minutosDiferencia > tiempoExpiracion) {
+        return res.status(400).json({ error: "El código ha expirado" });
+      }
+
+      if (codigo == codigoGuardado) {
+        codigoEnviado = {};
+
+        const usuario = req.UsuarioUpdate;
+
+        const salt = bcryptjs.genSaltSync();
+        const newPassword = bcryptjs.hashSync(password, salt);
+
+        await Usuario.findByIdAndUpdate(
+          usuario.id,
+          { password: newPassword },
+          { new: true }
+        );
+
+        return res
+          .status(200)
+          .json({ msg: "Contraseña actualizada con éxito" });
+      }
+
+      return res.status(400).json({ error: "Código incorrecto" });
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500).json({
+        error: "Error, hable con el WebMaster",
+      });
     }
   },
 
