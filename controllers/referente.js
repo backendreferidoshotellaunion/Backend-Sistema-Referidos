@@ -46,7 +46,7 @@ const httpReferente = {
         .populate("idReferido")
         .populate("idNivelReferente");
       if (!referente) {
-        return res.status(404).json({ error: "Referente no encontrado" });
+        return res.status(404).json({ error: "Embajador no encontrado" });
       }
 
       res.json(referente);
