@@ -167,7 +167,7 @@ const httpReferente = {
         from: process.env.userEmail,
         to: referente.correo,
         subject: "Información sobre el nivel de embajador - Hotel",
-        text: `Hola ${referente.nombre}, se te ha asignado un nuevo nivel de embajador en el hotel, ahora estás en el ${referente.idNivelReferente.nombre} y cuentas con los siguientes beneficios:
+        text: `Hola ${referente.nombre}, se te ha asignado un nuevo nivel de embajador en el hotel, ahora estás en el nivel ${referente.idNivelReferente.nombre} y cuentas con los siguientes beneficios:
         ${referente.idNivelReferente.beneficio}.`,
       };
   
